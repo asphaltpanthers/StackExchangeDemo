@@ -19,6 +19,15 @@ namespace SED.Console
             //Initilize the StackExchange client.
             var stackExchange = new StackExchange();
 
+            //Get the questions.
+            var questions = GetQuestions(stackExchange);
+
+            //Get user ids.
+            var users = questions.Select(q => q.Owner.User_Id).Distinct();
+        }
+
+        private static IEnumerable<Question> GetQuestions(StackExchange stackExchange)
+        {
             //The API will return a maximum of 100 questions, so we need to request multiple
             //pages of questions until we have them all.
             var hasMore = true;
@@ -26,6 +35,11 @@ namespace SED.Console
             var questions = new List<Question>();
             while (hasMore)
             {
+                //The instructions state to get questions with C#, .NET, and Selenium tags.
+                //If we wanted to get instructions with C#, .NET, or Selenium tags, I would
+                //have to make multiple requests. If we wanted to get instructions with only
+                //C#, .NET, and Selenium tags, I would have to filter these questions some
+                //other way.
                 var model = stackExchange.GetQuestions(new List<string>()
                 {
                     "C#",
@@ -37,6 +51,8 @@ namespace SED.Console
                 hasMore = model.Has_More;
                 page++;
             }
+
+            return questions;
         }
     }
 }
