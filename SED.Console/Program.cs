@@ -1,4 +1,6 @@
 ﻿using SED.Platform;
+using SED.Platform.Clients;
+using SED.Platform.Entities;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -14,11 +16,27 @@ namespace SED.Console
     {
         static void Main(string[] args)
         {
-            //Initilize the HTTP client. If I were writing this code as an enterprise application,
-            //I would implement a DI solution such as Unity. I don't think you're all that
-            //interested in seeing that though.
-            //Store the URL in the App.config to support testing multiple environments.
-            var http = new Http(ConfigurationManager.AppSettings["URL"]);
+            //Initilize the StackExchange client.
+            var stackExchange = new StackExchange();
+
+            //The API will return a maximum of 100 questions, so we need to request multiple
+            //pages of questions until we have them all.
+            var hasMore = true;
+            var page = 1;
+            var questions = new List<Question>();
+            while (hasMore)
+            {
+                var model = stackExchange.GetQuestions(new List<string>()
+                {
+                    "C#",
+                    ".NET",
+                    "Selenium"
+                }, "stackoverflow", page);
+
+                questions.AddRange(model.Items);
+                hasMore = model.Has_More;
+                page++;
+            }
         }
     }
 }
