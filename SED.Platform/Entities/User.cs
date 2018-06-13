@@ -11,6 +11,7 @@ namespace SED.Platform.Entities
         public BadgeCounts Badge_Counts { get; set; }
         public int Account_Id { get; set; }
         public bool Is_Employee { get; set; }
+        public int Last_Modified_date { get; set; }
         public int Last_Access_Date { get; set; }
         public int Reputation_Change_Year { get; set; }
         public int Reputation_Change_Quarter { get; set; }
@@ -20,6 +21,10 @@ namespace SED.Platform.Entities
         public int Reputation { get; set; }
         public int Creation_Date { get; set; }
         public string User_Type { get; set; }
+        public int User_Id { get; set; }
+        public int Accept_Rate { get; set; }
+        public string Location { get; set; }
+        public string Website_Url { get; set; }
         public string Link { get; set; }
         public string Profile_Image { get; set; }
         public string Display_Name { get; set; }

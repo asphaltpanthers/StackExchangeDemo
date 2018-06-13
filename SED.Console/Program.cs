@@ -29,7 +29,7 @@ namespace SED.Console
 
             foreach (var question in questions)
             {
-                question.Weight = GetWeight(users.First(u => u.Account_Id == question.Owner.User_Id).Badge_Counts);
+                question.Weight = GetWeight(users.First(u => u.User_Id == question.Owner.User_Id).Badge_Counts);
             }
 
             //I'm only going to write the top 10 questions.
@@ -65,7 +65,8 @@ namespace SED.Console
                 page++;
             }
 
-            return questions;
+            //Filter questions from users that don't exist.
+            return questions.Where(q => q.Owner.User_Type != "does_not_exist");
         }
 
         private static IEnumerable<User> GetUsers(StackExchange stackExchange, IEnumerable<Question> questions)
@@ -79,7 +80,7 @@ namespace SED.Console
             var userLists = new List<List<int>>();
             for (var i = 0; i < questions.Count(); i += 100)
             {
-                userLists.Add(userIds.GetRange(i, Math.Min(100, questions.Count() - i)));
+                userLists.Add(userIds.GetRange(i, Math.Min(100, userIds.Count() - i)));
             }
 
             var users = new List<User>();

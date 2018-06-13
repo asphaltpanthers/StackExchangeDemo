@@ -24,14 +24,14 @@ namespace SED.Platform.Clients
             //Convert list of tags into a url encoded string.
             var tagged = HttpUtility.UrlEncode(string.Join(";", tags));
 
-            return _http.Get<ItemsModel<Question>>("questions?tagged=" + tagged + "&site=" + site + "&page=" + page + "&pagesize=100");
+            return _http.Get<ItemsModel<Question>>("questions?tagged=" + tagged + "&site=" + site + "&page=" + page + "&pagesize=100&key=U4DMV*8nvpm3EOpvf69Rxw((");
         }
 
         public ItemsModel<User> GetUsers(IEnumerable<int> ids, string site)
         {
             //Convert list of ids into a url encoded string.
             var query = HttpUtility.UrlEncode(string.Join(";", ids));
-            return _http.Get<ItemsModel<User>>("users/" + query + "?site=" + site);
+            return _http.Get<ItemsModel<User>>("users/" + query + "?site=" + site + "&pagesize=100&key=U4DMV*8nvpm3EOpvf69Rxw((");
         }
     }
 }
