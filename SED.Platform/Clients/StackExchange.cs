@@ -27,9 +27,11 @@ namespace SED.Platform.Clients
             return _http.Get<ItemsModel<Question>>("questions?tagged=" + tagged + "&site=" + site + "&page=" + page + "&pagesize=100");
         }
 
-        public ItemsModel<User> GetUser(int id, string site)
+        public ItemsModel<User> GetUsers(IEnumerable<int> ids, string site)
         {
-            return _http.Get<ItemsModel<User>>("users/" + id + "?site=" + site);
+            //Convert list of ids into a url encoded string.
+            var query = HttpUtility.UrlEncode(string.Join(";", ids));
+            return _http.Get<ItemsModel<User>>("users/" + query + "?site=" + site);
         }
     }
 }

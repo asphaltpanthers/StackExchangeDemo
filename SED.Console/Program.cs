@@ -1,9 +1,11 @@
-﻿using SED.Platform;
+﻿using Newtonsoft.Json;
+using SED.Platform;
 using SED.Platform.Clients;
 using SED.Platform.Entities;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,14 +24,19 @@ namespace SED.Console
             //Get the questions.
             var questions = GetQuestions(stackExchange);
 
-            //Get user ids.
-            var users = questions.Select(q => q.Owner.User_Id).Distinct();
+            //Get the users.
+            var users = GetUsers(stackExchange, questions);
 
-            //Get user weights
-            foreach (var user in users)
+            foreach (var question in questions)
             {
-                var weight = GetWeight(stackExchange.GetUser(user, "stackoverflow").Items.First().Badge_Counts);
+                question.Weight = GetWeight(users.First(u => u.Account_Id == question.Owner.User_Id).Badge_Counts);
             }
+
+            //I'm only going to write the top 10 questions.
+            var topTenQuestions = questions.OrderByDescending(q => q.Weight).Take(10);
+
+            //Write the top 10 questions to bin/Debug/TopTenQuestions.json.
+            File.WriteAllText("TopTenQuestions.json", JsonConvert.SerializeObject(topTenQuestions));
         }
 
         private static IEnumerable<Question> GetQuestions(StackExchange stackExchange)
@@ -61,9 +68,32 @@ namespace SED.Console
             return questions;
         }
 
+        private static IEnumerable<User> GetUsers(StackExchange stackExchange, IEnumerable<Question> questions)
+        {
+            //Get all the user ids associated to the questions.
+            var userIds = questions.Select(q => q.Owner.User_Id).Distinct().ToList();
+
+            //The maximum number of userIds I can query for is 100, so split the list up into
+            //lists of size 100.
+            //From https://stackoverflow.com/questions/11463734/split-a-list-into-smaller-lists-of-n-size?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+            var userLists = new List<List<int>>();
+            for (var i = 0; i < questions.Count(); i += 100)
+            {
+                userLists.Add(userIds.GetRange(i, Math.Min(100, questions.Count() - i)));
+            }
+
+            var users = new List<User>();
+            foreach (var list in userLists)
+            {
+                users.AddRange(stackExchange.GetUsers(list, "stackoverflow").Items);
+            }
+
+            return users;
+        }
+
         private static int GetWeight(BadgeCounts badgeCounts)
         {
-            //The instruction don't give explicit badge weights so I'll make up my own.
+            //The instructions don't give explicit badge weights so I'll make up my own.
             //Gold = 3
             //Silver = 2
             //Bronze = 1

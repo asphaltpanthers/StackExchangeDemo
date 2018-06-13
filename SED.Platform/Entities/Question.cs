@@ -20,5 +20,6 @@ namespace SED.Platform.Entities
         public int Question_Id { get; set; }
         public string Link { get; set; }
         public string Title { get; set; }
+        public int Weight { get; set; }
     }
 }
