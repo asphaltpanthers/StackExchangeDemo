@@ -24,6 +24,12 @@ namespace SED.Console
 
             //Get user ids.
             var users = questions.Select(q => q.Owner.User_Id).Distinct();
+
+            //Get user weights
+            foreach (var user in users)
+            {
+                var weight = GetWeight(stackExchange.GetUser(user, "stackoverflow").Items.First().Badge_Counts);
+            }
         }
 
         private static IEnumerable<Question> GetQuestions(StackExchange stackExchange)
@@ -53,6 +59,15 @@ namespace SED.Console
             }
 
             return questions;
+        }
+
+        private static int GetWeight(BadgeCounts badgeCounts)
+        {
+            //The instruction don't give explicit badge weights so I'll make up my own.
+            //Gold = 3
+            //Silver = 2
+            //Bronze = 1
+            return (badgeCounts.Gold * 3) + (badgeCounts.Silver * 2) + badgeCounts.Bronze;
         }
     }
 }

@@ -46,9 +46,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Clients\StackExchange.cs" />
+    <Compile Include="Entities\BadgeCounts.cs" />
     <Compile Include="Entities\ItemsModel.cs" />
     <Compile Include="Entities\Owner.cs" />
     <Compile Include="Entities\Question.cs" />
+    <Compile Include="Entities\User.cs" />
     <Compile Include="Http.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
